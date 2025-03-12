@@ -8,6 +8,7 @@ FROM raschidjfr/angular-cypress:${BASE_IMAGE_TAG}
 ARG IONIC_VERSION
 ARG ANGULAR_VERSION
 
+WORKDIR /app
 COPY ionic${IONIC_VERSION}/angular${ANGULAR_VERSION} /app
 
-
+RUN ["sh", "-c", "npm i  && npm i -D cypress && npm i -g wait-on"]

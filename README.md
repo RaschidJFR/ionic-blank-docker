@@ -1,37 +1,26 @@
 # Ionic Blank Docker Image
-This repository is intended to create a set of ionic blank projects to do E2E testing for specific components.
+This repository is intended to create a set of ionic blank projects to do E2E testing with Cypress. 
+
+## Image Content
+* The image contains an Ionic-Angular project in `/app`.
+* The image includes the npm packages `@angular/cli`, `cypress`, and `wait-on` installed globally.
+
+## Usage
+Sample usage:
 
 ```sh
-$ ionic start
-
-? Use the app creation wizard? No
-
-Pick a framework! 😁
-
-Please select the JavaScript framework to use for your new app. To bypass this prompt next time, supply a value for the
---type option.
-
-? Framework: Angular
-
-Every great app needs a name! 😍
-
-Please enter the full name of your app. You can change this at any time. To bypass this prompt next time, supply name,
-the first argument to ionic start.
-
-? Project name: demo
-
-Let's pick the perfect starter template! 💪
-
-Starter templates are ready-to-go Ionic apps that come packed with everything you need to build your app. To bypass this
-prompt next time, supply template, the second argument to ionic start.
-
-? Starter template: blank
-? Would you like to build your app with NgModules or Standalone Components? 
- Standalone components are a new way to build with Angular that simplifies the way you build your app. 
- To learn more, visit the Angular docs:
- https://angular.io/guide/standalone-components
-
- 
-  NgModules 
-❯ Standalone 
+docker run \
+  --rm \
+  -v "$ANGULAR_PROJECT_PATH:/project" \
+  raschidjfr/ionic-blank:ionic8-angular19-cypress14 \
+  bash -c "\
+    mkdir cypress \
+    && cp -r /project/cypress/* ./cypress \
+    && cp /project/cypress.config.ts . \
+    && cp -r /project/src/app/home/* ./src/app/home \
+    && ng serve --host 0.0.0.0 --port 4200 \
+    & (wait-on http://0.0.0.0:4200 && cypress run --headless) \
+    || { echo 'Angular server failed to start'; exit 1; }"
 ```
+### Considerations
+* Both a `cypress.config.ts` file and a `cypress/` folder must exist in the root of the angular project.
